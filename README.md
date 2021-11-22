@@ -1,2 +1,2 @@
 # PacmanPt3
-Ali Ghasemi aghasemi@csu.fullerton.edu
+Ali Ghasemi aghasemi@csu.fullerton.edu 
