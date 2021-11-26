@@ -110,8 +110,8 @@ class ReflexAgent(Agent):
             ghostProximity = manhattanDistance( newPos, ghostState.getPosition() )
         #   if ghost is within arbitrary distance of pacman, "scare" grows strongly with proximity
         #       currently 'closer than 6 squares'
-            if ghostProximity < 6:
-                closerToGhosts += (5 - ghostProximity)
+            if (ghostProximity < 6) and (ghostState.scaredTimer > 0):
+                closerToGhosts += (5 - ghostProximity)**2
 
 
         return successorGameState.getScore() + closerToFood - closerToGhosts
