@@ -69,12 +69,52 @@ class ReflexAgent(Agent):
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
+        """
+        Returns a Grid of boolean food indicator variables.
+
+        Grids can be accessed via list notation, so to check
+        if there is food at (x,y), just call
+
+        currentFood = state.getFood()
+        if currentFood[x][y] == True: ...
+        """
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+
+        # desire 1 - get closer to food - equal weight for all to start
+        #   expected problems: 2 food at equal distance = indecision
+        closerToFood = 0
+        #   PCODE - NESTED LOOP
+        #for each row in newfood
+        for col in range(0, newFood.width ):
+        #   for each col in newfood.row
+            for row  in range(0, newFood.height ):
+        #       if newfood[row][col] == true
+                if newFood[col][row] == True:
+        #           there is a food here - find distance from all food to pacman, smaller=better
+        #           closerToFood += 1 / manhattanDistance( food position, pacman position )
+                    foodPos = [col, row] 
+                    closerToFood += 1 / (manhattanDistance( foodPos, newPos ))
+        #end of food calculation - indecision with multiple food sources confirmed
+
+        #desire 2 - avoid ghosts - equal weight for all ghosts
+        #   expected problems: possible to get surrounded by ghosts
+        closerToGhosts = 0
+        #   PCODE - NESTED LOOP
+        #for each ghost in newghoststates
+        for ghostState in newGhostStates:
+        #   get the distance between pacman and ghost
+            ghostProximity = manhattanDistance( newPos, ghostState.getPosition() )
+        #   if ghost is within arbitrary distance of pacman, "scare" grows strongly with proximity
+        #       currently 'closer than 6 squares'
+            if ghostProximity < 6:
+                closerToGhosts += (5 - ghostProximity)**2
+
+        return successorGameState.getScore() + closerToFood - closerToGhosts
+        #return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
     """
